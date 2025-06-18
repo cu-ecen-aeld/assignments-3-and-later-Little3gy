@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # a simple bash script
 
@@ -19,7 +19,7 @@ then
 else
 
 	X=$( find "$filesdir" -type f 2>/dev/null | wc -l )
-	Y=$( grep -rI --no-messages "$searchstr" "$filesdir" | wc -l )
+	Y=$( grep -rI "$searchstr" "$filesdir" 2>/dev/null | wc -l )
 	
 	echo "The number of files are $X and the number of matching lines are $Y"
 	exit 0
