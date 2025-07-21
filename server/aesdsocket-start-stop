@@ -1,0 +1,85 @@
+#!/bin/sh
+
+
+# defile variables
+	# four variables
+DAEMON_NAME="aesdsocket" 
+DAEMON_PATH="/usr/bin/aesdsocket" # Expected installation path by Buildroot
+PID_FILE="/var/run/${DAEMON_NAME}.pid"
+DATA_FILE="/var/tmp/aesdsocketdata"
+
+#-------------------------------------------------------------------------------#
+#                       Function to start the daemon                             #
+#-------------------------------------------------------------------------------# 
+do_start() {
+	echo "Starting ${DAEMON_NAME}"
+	# start the damon in the bk, creates a pid file? exexutes the aesdsocket application - from assignment 4
+	# Explain this line. What's the mechanism
+	# start-stop-daemon is a debian specific utility
+	# the following arguement are utility specific 
+	# --pidfile ${PID_FILE} specifies a file where the pid of the started daemon should be written
+	# --exec ${DAEMON_PATH} specifies the path to the daemon binaries
+	# -- -d the -- indicates that the subsequent arguments shall be passed to the excutable 
+	start-stop-daemon --start --background --pidfile ${PID_FILE} --exec ${DAEMON_PATH} -- -d
+	
+	# Check if the daemon starts successfully
+	if [ $? -eq 0 ]; then
+        # check if the exit status of the last executed command was 0
+	echo "${DAEMON_NAME} started successfully."
+    else
+        echo "Failed to start ${DAEMON_NAME}."
+    fi
+}
+#-------------------------------------------------------------------------------#
+# 			Function to stop the daemon				#
+#-------------------------------------------------------------------------------#
+do_stop() {
+	# print to user stopping
+	echo "Stopping ${DAEMON_NAME}"
+	# Stop the daemon by sending SIGTERM signal using its PID file
+	# start-stop-daemon utility and pass these argument
+	start-stop-daemon --stop --pidfile ${PID_FILE} --signal SIGTERM
+
+	# Wait a moment for the daemon to terminate gracefully
+	sleep 1 
+
+	# Clean up the data file created by aesdsocket
+	# check if the file exists then 
+	if [ -f "${DATA_FILE}" ]; then
+	rm "${DATA_FILE}"
+	echo "Removed ${DATA_FILE}"
+	fi
+
+	# Remove the PID file after stopping
+	if [ -f "${PID_FILE}" ]; then
+	rm "${PID_FILE}"
+	echo "Removed ${PID_FILE}"
+	fi
+}
+ 
+#-------------------------------------------------------------------------------#
+# 	Case statement to handle start/stop/restart/status arguments		#
+#-------------------------------------------------------------------------------#
+# check the first argument for any of the following cases
+case "$1" in
+    start)
+        do_start
+        ;;
+    stop)
+        do_stop
+        ;;
+    restart)
+        do_stop
+        do_start
+        ;;
+    status)
+        start-stop-daemon --status --pidfile ${PID_FILE}
+        ;;
+	# if anything else other than the cases above print the availabe options
+    *)
+        echo "Usage: $0 {start|stop|restart|status}"
+        exit 1
+        ;;
+esac
+
+exit 0
