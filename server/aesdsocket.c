@@ -8,8 +8,8 @@
  * and then sends the entire file content back to the client.
  * It handles SIGINT and SIGTERM for graceful shutdown.
  *
- * Author: [Your Name Here]
- * Date: [Current Date]
+ * Author: Failcceed
+ * Date: Aug 28
  */
 
 // These two preprocessors give access to advanced tools. SLIST_FOREACH_SAFE doesn't exist in the standard C library.
