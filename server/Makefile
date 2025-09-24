@@ -1,16 +1,12 @@
 # Makefile for aesdsocket app
 
 # Compiler and flags
-CC = gcc
-CFLAGS = -Wall -Wextra -g -std=c99 
+CC ?= gcc
+CFLAGS ?= -Wall -Wextra -g -std=c99 
+LDFLAGS ?= -pthread -lrt
+
 TARGET = aesdsocket
 SOURCES = aesdsocket.c
-
-
-# Cross compilation support
-ifdef CROSS_COMPILE
-	CC= $(CROSS_COMPILE)gcc
-endif
 
 
 # Default target
@@ -22,7 +18,7 @@ all: $(TARGET)
 
 # Build the target
 $(TARGET): $(SOURCES)
-	$(CC) $(CFLAGS) -o $(TARGET) $(SOURCES)
+	$(CC) $(CFLAGS) -o $(TARGET) $(SOURCES) $(LDFLAGS)
 
 # Clean build artifacts 
 clean: 
