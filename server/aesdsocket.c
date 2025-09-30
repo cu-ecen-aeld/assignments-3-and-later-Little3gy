@@ -190,7 +190,7 @@ int timer_setup(void)
     memset(&sa_timer, 0, sizeof(sa_timer));
     sa_timer.sa_sigaction = timer_handler;
     sigemptyset(&sa_timer.sa_mask);
-    sa_timer.sa_flags = SA_SIGINFO;
+    sa_timer.sa_flags = SA_SIGINFO | SA_RESTART;
 
     if (sigaction(SIGRTMIN, &sa_timer, NULL) == -1)
     {
